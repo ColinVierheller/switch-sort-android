@@ -20,6 +20,9 @@ class AppSettingsRepository(context: Context) : SettingsStorage {
 
         /** Schlüssel: Feldgröße 3/4/5 (Int). */
         const val KEY_BOARD_SIZE = "board_size"
+
+        /** Schlüssel: Darstellungsmodus 0=System, 1=Hell, 2=Dunkel (Int). */
+        const val KEY_THEME_MODE = "theme_mode"
     }
 
     /** Geladener, normalisierter Spielername; ungültige Alt-Werte → "Gast". */
@@ -46,6 +49,15 @@ class AppSettingsRepository(context: Context) : SettingsStorage {
     /** Speichert die normalisierte Feldgröße. */
     fun saveBoardSize(size: Int) {
         putInt(KEY_BOARD_SIZE, SettingsNormalizer.normalizeBoardSize(size))
+    }
+
+    /** Geladener, normalisierter Darstellungsmodus; ungültige Alt-Werte → System. */
+    fun loadThemeMode(): Int =
+        SettingsNormalizer.normalizeThemeMode(getInt(KEY_THEME_MODE))
+
+    /** Speichert den normalisierten Darstellungsmodus. */
+    fun saveThemeMode(mode: Int) {
+        putInt(KEY_THEME_MODE, SettingsNormalizer.normalizeThemeMode(mode))
     }
 
     // SettingsStorage -------------------------------------------------------

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fallback-Icon für API 23-25: adaptive-icon ist dort nicht verfügbar,
+     daher eine einfache Layer-List aus Hintergrundverlauf und Vordergrund.
+     item-Attribut width/height erfordert API 23 = minSdk. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/ic_launcher_bg" />
+    <item
+        android:width="72dp"
+        android:height="72dp"
+        android:drawable="@drawable/ic_launcher_fg"
+        android:gravity="center" />
+</layer-list>

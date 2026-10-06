@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Nebenaktion als kleiner Block mit Tiefenkante (gleiche Sprache wie
+     Pill und Spielblöcke); gedrückt sinkt die Oberfläche auf die Kante. -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <layer-list>
+            <item android:top="@dimen/chip_depth">
+                <shape android:shape="rectangle">
+                    <solid android:color="@color/chipSurface" />
+                    <corners android:radius="16dp" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+    <item>
+        <layer-list>
+            <item android:top="@dimen/chip_depth">
+                <shape android:shape="rectangle">
+                    <solid android:color="@color/chipEdge" />
+                    <corners android:radius="16dp" />
+                </shape>
+            </item>
+            <item android:bottom="@dimen/chip_depth">
+                <shape android:shape="rectangle">
+                    <solid android:color="@color/chipSurface" />
+                    <corners android:radius="16dp" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+</selector>

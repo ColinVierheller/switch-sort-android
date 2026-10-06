@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Querformat: Zielzahl kompakter, damit dem Spielfeld Höhe bleibt. -->
+<resources>
+    <dimen name="target_text">56sp</dimen>
+    <dimen name="target_label_margin">4dp</dimen>
+    <dimen name="board_margin_top">8dp</dimen>
+</resources>

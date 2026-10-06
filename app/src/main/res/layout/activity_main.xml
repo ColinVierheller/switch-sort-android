@@ -1,138 +1,208 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Eine Activity, vier Panels. Sichtbarkeit wird in MainActivity gesteuert.
-     Klassische Android Views, keine Abhängigkeiten außer der Plattform. -->
+<!-- Eine Activity, vier Panels; Sichtbarkeit steuert MainActivity.
+     Kein eigener Hintergrund: der animierte Verlauf liegt im Fenster.
+     fitsSystemWindows hält Inhalte aus Status- und Navigationsleiste. -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:clipChildren="false"
+    android:fitsSystemWindows="true">
 
     <!-- ============ Panel: Hauptmenü ============ -->
-    <LinearLayout
+    <ScrollView
         android:id="@+id/panel_menu"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:padding="24dp">
+        android:fillViewport="true">
 
-        <TextView
-            android:id="@+id/menu_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
-            android:text="@string/menu_title"
-            android:textSize="28sp"
-            android:textStyle="bold" />
-
-        <Button
-            android:id="@+id/btn_start"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/menu_start" />
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="@dimen/screen_padding">
 
-        <Button
-            android:id="@+id/btn_scores"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/menu_scores" />
+            <ImageView
+                android:layout_width="176dp"
+                android:layout_height="176dp"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_launcher_fg" />
 
-        <Button
-            android:id="@+id/btn_options"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/menu_options" />
+            <TextView
+                android:id="@+id/menu_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autoSizeMaxTextSize="44sp"
+                android:autoSizeMinTextSize="28sp"
+                android:autoSizeTextType="uniform"
+                android:fontFamily="sans-serif-thin"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:letterSpacing="0.15"
+                android:maxLines="1"
+                android:text="@string/menu_title"
+                android:textColor="@color/textPrimary"
+                android:textSize="44sp"
+                tools:targetApi="o" />
 
-        <Button
-            android:id="@+id/btn_exit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/menu_exit" />
-    </LinearLayout>
+            <Button
+                android:id="@+id/btn_start"
+                style="@style/SwitchSort.Pill"
+                android:layout_marginTop="64dp"
+                android:text="@string/menu_start" />
+
+            <LinearLayout
+                android:layout_width="@dimen/pill_width"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btn_scores"
+                    style="@style/SwitchSort.Chip"
+                    android:text="@string/menu_scores" />
+
+                <Button
+                    android:id="@+id/btn_options"
+                    style="@style/SwitchSort.Chip"
+                    android:layout_marginStart="@dimen/chip_gap"
+                    android:text="@string/menu_options" />
+
+                <Button
+                    android:id="@+id/btn_exit"
+                    style="@style/SwitchSort.Chip"
+                    android:layout_marginStart="@dimen/chip_gap"
+                    android:text="@string/menu_exit" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
 
     <!-- ============ Panel: Optionen ============ -->
     <ScrollView
         android:id="@+id/panel_options"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:fillViewport="true"
         android:visibility="gone">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="24dp">
+            android:padding="@dimen/screen_padding">
 
             <TextView
+                style="@style/SwitchSort.Title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:text="@string/options_title"
-                android:textSize="22sp"
-                android:textStyle="bold" />
+                android:layout_marginTop="24dp"
+                android:text="@string/options_title" />
 
             <TextView
+                style="@style/SwitchSort.Label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:labelFor="@id/edit_player_name"
                 android:text="@string/options_player_name" />
 
             <EditText
                 android:id="@+id/edit_player_name"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="56dp"
+                android:layout_marginTop="10dp"
                 android:autofillHints="username"
-                android:hint="@string/options_player_name"
-                android:importantForAccessibility="yes"
+                android:background="@drawable/bg_glass"
                 android:inputType="textPersonName"
-                android:singleLine="true" />
+                android:maxLines="1"
+                android:paddingStart="18dp"
+                android:paddingEnd="18dp"
+                android:singleLine="true"
+                android:textColor="@color/textPrimary"
+                android:textColorHint="@color/textSecondary"
+                android:textSize="17sp" />
 
             <TextView
                 android:id="@+id/text_options_error"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="#B00020"
+                android:layout_marginTop="8dp"
+                android:textColor="@color/errorColor"
+                android:textSize="13sp"
                 android:visibility="gone" />
 
             <TextView
+                style="@style/SwitchSort.Label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="32dp"
                 android:text="@string/options_board_size_label" />
 
             <RadioGroup
                 android:id="@+id/radio_board_size"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+                style="@style/SwitchSort.SegmentGroup">
 
                 <RadioButton
                     android:id="@+id/radio_board_3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    style="@style/SwitchSort.Segment"
                     android:text="@string/options_board_3" />
 
                 <RadioButton
                     android:id="@+id/radio_board_4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    style="@style/SwitchSort.Segment"
                     android:text="@string/options_board_4" />
 
                 <RadioButton
                     android:id="@+id/radio_board_5"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    style="@style/SwitchSort.Segment"
                     android:text="@string/options_board_5" />
             </RadioGroup>
 
+            <TextView
+                style="@style/SwitchSort.Label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:text="@string/options_theme_label" />
+
+            <RadioGroup
+                android:id="@+id/radio_theme"
+                style="@style/SwitchSort.SegmentGroup">
+
+                <RadioButton
+                    android:id="@+id/radio_theme_system"
+                    style="@style/SwitchSort.Segment"
+                    android:text="@string/options_theme_system" />
+
+                <RadioButton
+                    android:id="@+id/radio_theme_light"
+                    style="@style/SwitchSort.Segment"
+                    android:text="@string/options_theme_light" />
+
+                <RadioButton
+                    android:id="@+id/radio_theme_dark"
+                    style="@style/SwitchSort.Segment"
+                    android:text="@string/options_theme_dark" />
+            </RadioGroup>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:minHeight="40dp" />
+
             <Button
                 android:id="@+id/btn_options_save"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                style="@style/SwitchSort.Pill"
+                android:layout_gravity="center_horizontal"
                 android:text="@string/options_save" />
 
             <Button
                 android:id="@+id/btn_options_back"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                style="@style/SwitchSort.TextButton"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="12dp"
                 android:text="@string/options_back" />
         </LinearLayout>
     </ScrollView>
@@ -143,113 +213,239 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="24dp"
+        android:padding="@dimen/screen_padding"
         android:visibility="gone">
 
         <TextView
+            style="@style/SwitchSort.Title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:text="@string/scores_title"
-            android:textSize="22sp"
-            android:textStyle="bold" />
+            android:layout_marginTop="24dp"
+            android:text="@string/scores_title" />
 
-        <ScrollView
+        <TextView
+            android:id="@+id/text_scores"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/scores_empty"
+            android:textColor="@color/textSecondary"
+            android:textSize="15sp"
+            android:visibility="gone" />
+
+        <ScrollView
+            android:id="@+id/scroll_scores"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="24dp"
             android:layout_weight="1">
 
-            <TextView
-                android:id="@+id/text_scores"
+            <LinearLayout
+                android:id="@+id/list_scores"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="16sp" />
+                android:orientation="vertical" />
         </ScrollView>
 
         <Button
             android:id="@+id/btn_scores_back"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            style="@style/SwitchSort.TextButton"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="12dp"
             android:text="@string/scores_back" />
     </LinearLayout>
 
     <!-- ============ Panel: Spiel ============ -->
-    <ScrollView
+    <FrameLayout
         android:id="@+id/panel_game"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:clipChildren="false"
         android:visibility="gone">
 
         <LinearLayout
+            android:id="@+id/game_content"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:clipChildren="false"
+            android:clipToPadding="false"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:paddingStart="24dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="24dp"
+            android:paddingBottom="24dp">
+
+            <!-- Kopfzeile: Abbruch + Treffer | Zeit | Versuche -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:minHeight="56dp"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical|start"
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:id="@+id/btn_game_close"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginStart="-8dp"
+                        android:background="@drawable/bg_text_button"
+                        android:contentDescription="@string/game_close"
+                        android:src="@drawable/ic_close" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            style="@style/SwitchSort.Label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/game_stat_label_score"
+                            android:textSize="11sp" />
+
+                        <TextView
+                            android:id="@+id/text_score"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-light"
+                            android:includeFontPadding="false"
+                            android:maxLines="1"
+                            android:textColor="@color/textPrimary"
+                            android:textSize="24sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/text_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:textColor="@color/textSecondary"
+                    android:textSize="15sp"
+                    android:typeface="monospace" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/SwitchSort.Label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/game_stat_label_misses"
+                        android:textSize="11sp" />
+
+                    <de.dhbw.switchsort.ui.MissDotsView
+                        android:id="@+id/misses_dots"
+                        android:layout_width="wrap_content"
+                        android:layout_height="28dp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                style="@style/SwitchSort.Label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/target_label_margin"
+                android:letterSpacing="0.3"
+                android:text="@string/game_target_label" />
 
             <TextView
                 android:id="@+id/text_target"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-thin"
                 android:gravity="center"
-                android:textSize="22sp"
-                android:textStyle="bold" />
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:textColor="@color/textPrimary"
+                android:textSize="@dimen/target_text" />
 
-            <LinearLayout
+            <de.dhbw.switchsort.ui.BoardView
+                android:id="@+id/board_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:orientation="horizontal">
+                android:layout_height="0dp"
+                android:layout_marginTop="@dimen/board_margin_top"
+                android:layout_weight="1" />
+        </LinearLayout>
 
-                <TextView
-                    android:id="@+id/text_score"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
-
-                <TextView
-                    android:id="@+id/text_misses"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="end" />
-            </LinearLayout>
+        <!-- Spielende-Overlay -->
+        <LinearLayout
+            android:id="@+id/overlay_game_over"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="@dimen/screen_padding"
+            android:visibility="gone">
 
             <TextView
-                android:id="@+id/text_time"
-                android:layout_width="match_parent"
+                android:id="@+id/text_final_score"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp" />
+                android:fontFamily="sans-serif-thin"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:textColor="@color/textPrimary"
+                android:textSize="80sp" />
 
             <TextView
-                android:id="@+id/text_finished"
-                android:layout_width="match_parent"
+                style="@style/SwitchSort.Label"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:gravity="center"
-                android:textColor="#B00020"
-                android:textSize="18sp"
-                android:textStyle="bold"
+                android:layout_marginTop="4dp"
+                android:letterSpacing="0.3"
+                android:text="@string/game_over_label"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/text_final_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:letterSpacing="0.05"
+                android:maxLines="1"
+                android:textColor="@color/textSecondary"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/text_new_record"
+                style="@style/SwitchSort.Label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/game_new_record"
+                android:textSize="13sp"
                 android:visibility="gone" />
-
-            <GridLayout
-                android:id="@+id/grid_board"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp" />
 
             <Button
                 android:id="@+id/btn_restart"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/game_restart"
-                android:visibility="gone" />
+                style="@style/SwitchSort.Pill"
+                android:layout_marginTop="40dp"
+                android:text="@string/game_restart" />
 
             <Button
                 android:id="@+id/btn_game_back"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                style="@style/SwitchSort.TextButton"
+                android:layout_marginTop="12dp"
                 android:text="@string/game_to_menu" />
         </LinearLayout>
-    </ScrollView>
+    </FrameLayout>
 </FrameLayout>

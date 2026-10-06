@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Liefert dem Code den effektiv aktiven Modus, auch beim manuellen
+     Override in MainActivity.attachBaseContext. -->
+<resources>
+    <bool name="is_night">false</bool>
+</resources>

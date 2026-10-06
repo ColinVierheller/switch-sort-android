@@ -12,6 +12,13 @@ object SettingsNormalizer {
     const val DEFAULT_BOARD_SIZE = 3
     val VALID_BOARD_SIZES = setOf(3, 4, 5)
 
+    /** Darstellungsmodus: 0 = System, 1 = Hell, 2 = Dunkel. */
+    const val THEME_SYSTEM = 0
+    const val THEME_LIGHT = 1
+    const val THEME_DARK = 2
+    const val DEFAULT_THEME_MODE = THEME_SYSTEM
+    val VALID_THEME_MODES = setOf(THEME_SYSTEM, THEME_LIGHT, THEME_DARK)
+
     /** Ergebnis der Validierung einer neuen UI-Eingabe. */
     sealed interface NameValidation {
         /** Gültiger, getrimmter Name (leer/blank wurde zu [DEFAULT_PLAYER_NAME] ersetzt). */
@@ -54,4 +61,12 @@ object SettingsNormalizer {
      */
     fun normalizeBoardSize(value: Int?): Int =
         if (value != null && value in VALID_BOARD_SIZES) value else DEFAULT_BOARD_SIZE
+
+    /**
+     * Normalisiert einen gespeicherten oder gewählten Darstellungsmodus.
+     * Nur System/Hell/Dunkel sind erlaubt; alles andere fällt auf
+     * [DEFAULT_THEME_MODE] zurück.
+     */
+    fun normalizeThemeMode(value: Int?): Int =
+        if (value != null && value in VALID_THEME_MODES) value else DEFAULT_THEME_MODE
 }

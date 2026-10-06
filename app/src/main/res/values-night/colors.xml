@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Dunkles Gegenstück zu values/colors.xml (gleiche Namen).
+     Launcher-Icon-Farben fehlen hier bewusst: das Icon bleibt hell. -->
+<resources>
+    <color name="textPrimary">#F1EDF4</color>
+    <color name="textSecondary">#A9A3B3</color>
+    <color name="errorColor">#F2B8B5</color>
+
+    <color name="windowGradientTop">#2C3E47</color>
+    <color name="windowGradientBottom">#191B2B</color>
+
+    <color name="cellSurface">#1FFFFFFF</color>
+    <color name="cellEdge">#4D000000</color>
+    <color name="cellError">#A8636B</color>
+
+    <color name="pillSurface">#ECE8F4</color>
+    <color name="pillEdge">#66000000</color>
+
+    <color name="glassFill">#1AFFFFFF</color>
+    <color name="segmentSelected">#33FFFFFF</color>
+    <color name="ripple">#33FFFFFF</color>
+
+    <color name="chipSurface">#24FFFFFF</color>
+    <color name="chipEdge">#59000000</color>
+</resources>
