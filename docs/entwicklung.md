@@ -1,4 +1,204 @@
-# Entwicklungsprotokoll
+# Entwicklungsdokumentation SwitchSort für Android
+
+Grundlage für die schriftliche Studienarbeit. **Teil A** beschreibt den aktuellen Stand strukturiert (Anforderungen, Architektur-, Technologie- und Implementierungsentscheidungen mit Alternativen und Begründung). **Teil B** ist das chronologische Protokoll inkl. verworfener Wege; ältere Einträge dort werden nicht umgeschrieben, sondern durch spätere Einträge korrigiert.
+
+Pflegeregel: Jede Änderung an Architektur, Technologie, Implementierung, Design, Tests oder Werkzeugen wird hier in Teil A aktualisiert und in Teil B protokolliert.
+
+---
+
+# Teil A — Wissensbasis (Stand: Branch `feature/design`, 06.10.2026)
+
+## A1 Aufgabenstellung und Anforderungsabdeckung
+
+Quelle: Themenblatt „SwitchSort für Android“ (D. Rietz, DHBW Stuttgart, Stand 24.05.2022). Spielziel: in einem Spielfeld eine angezeigte Zufallszahl schnellstmöglich finden und antippen; danach erscheint eine neue Zufallszahl.
+
+| Anforderung (Themenblatt) | Umsetzung | Nachweis |
+| --- | --- | --- |
+| Android-App | Native Kotlin-App, minSdk 23, targetSdk 35 | `assembleDebug`, Emulator Pixel 7 / API 35 |
+| Einstiegsmenü: Spiel starten, Highscore, Optionen, Beenden | Menü-Panel mit „SPIELEN“ und Text-Aktionen; Beenden = `finish()` | Emulator-Screenshots |
+| Spielfeld 3×3 / 4×4 / 5×5 | `BoardGenerator` (n ∈ {3,4,5}), `BoardView` | `BoardGeneratorTest`, Screenshots 3×3/5×5 |
+| Optionen: Spielername, Spielfeldwahl | Namensfeld (Trim, 1–24 Zeichen, sonst „Gast“), Segment-Auswahl Feldgröße, zusätzlich Darstellungsmodus | `SettingsNormalizerTest` |
+| Highscore: Anzahl gefundener Zahlen | Top 10 lokal, sortiert Treffer ↓, Dauer ↑, Zeitpunkt ↑ | `HighScoreRankingTest` |
+| Spielende nach 3 Fehlversuchen | `GameSession.MAX_MISSES = 3`, danach Zeit eingefroren, keine Eingaben | `GameSessionTest` |
+| Beschreibung der Zufallszahlenerzeugung | siehe A6 | Quellcode stdlib, Tests mit festem Seed |
+| App zum Testen bereitstellen | Debug-APK + README-Anleitung; Repo auf GitHub | README |
+
+Im Gespräch festgelegte Auslegung offener Punkte: Zahlen je Feld eindeutig 1..n²; Ziel liegt immer im Feld; nach Treffer neues gemischtes Feld; Fehler behalten Feld und Ziel; Zeit wird nur angezeigt (kein Zeitlimit); abgebrochene Runden zählen nicht für den Highscore.
+
+## A2 Vorgehensmodell
+
+- **Iterativ-inkrementell** mit kleinen, prüfbaren Ständen: (1) Mindestanforderungen (`initial-setup`), (2) Design-Iteration 1 (Pastell, Hell/Dunkel), (3) Design-Iteration 2 (minimalistischer Mobile-Game-Stil). Jede Iteration endet mit Build, Tests, Lint und Emulator-Sichtprüfung.
+- **Plan vor Umsetzung:** schriftlicher Plan mit Akzeptanzkriterien (`docs/plans/2026-10-06-initial-setup.md`), Freigabe durch den Auftraggeber (Studierender) vor der Implementierung.
+- **Testgetriebene Logik:** Spiellogik und Persistenzregeln zuerst als JUnit-Tests formuliert, dann implementiert (Einschränkung zur Ausführungsreihenfolge siehe B, Abschnitt „SDK-Einrichtung“).
+- **Nutzerfeedback als Iterationstreiber:** z. B. „keine Zeilenumbrüche“, „moderner, wie Stack“ führten zu konkreten Designänderungen (B, Design-Abschnitte).
+
+## A3 Technologieentscheidungen
+
+| Entscheidung | Gewählt | Verworfene Alternativen (Grund) |
+| --- | --- | --- |
+| Plattform | Native Android, Kotlin | Pygame/Python (kein offizieller Android-Weg, Packaging-Risiko, Themenblatt fordert Android-App); Flutter/React Native (zusätzliche Laufzeit/Toolchain ohne Mehrwert für eine einzelne Plattform) |
+| UI-Technik | Klassische Android Views + XML-Layouts | Jetpack Compose (benötigt AndroidX-/Compose-Abhängigkeiten; Views sind im Lehrbuch Richter 2021 beschrieben und für vier Screens ausreichend) |
+| Bibliotheken | Keine Laufzeitabhängigkeiten, nur Plattform-APIs; Test: JUnit 4.13.2 | AndroidX/AppCompat/Material (Supply-Chain-Fläche, Lizenz-/CVE-Pflege, kein funktionaler Bedarf); Lottie (Animationen mit Plattform-Animatoren erreichbar) |
+| Persistenz | `SharedPreferences` (privat) | Room/SQLite (Overkill für ≤ 10 Einträge + 3 Einstellungen); DataStore (AndroidX) |
+| Highscore-Serialisierung | Java-Serialisierung + Base64 in einem Preference-Schlüssel | JSON (bräuchte Parser-Bibliothek oder Handarbeit); siehe Risiken in A8 |
+| Build | Gradle 9.7.0 (Wrapper, SHA-256 gepinnt), AGP 9.3.1 mit Built-in-Kotlin, KGP 2.4.20 auf dem Classpath, Bouncy-Castle-BOM 1.86 als Constraint | Gradle < 8.14.4 (High-CVEs), Gradle 8.14.4 (bündelt Bouncy Castle 1.78.1), AGP 8.13.x (deklariert Bouncy Castle 1.79, gebündeltes R8 zu alt für Kotlin 2.4) – siehe A12 |
+| Tests | JUnit 4 auf der JVM (`testDebugUnitTest`) | Instrumentierte Tests/Espresso (AndroidX-Abhängigkeit; UI wurde per Emulator-Sichtprüfung verifiziert) |
+
+## A4 Architektur
+
+Schichtung nach Verantwortung, Abhängigkeiten zeigen nur nach innen (UI → Logik), die Logik kennt kein Android:
+
+```mermaid
+flowchart TB
+  subgraph UI["UI-Schicht (Android)"]
+    MA[MainActivity<br/>Panels, Navigation, Lebenszyklus]
+    UIK[ui/: BoardView, BlockCellView,<br/>GradientBackground, MissDotsView,<br/>ScoreListRenderer, Palette]
+  end
+  subgraph DATA["Persistenz (Android)"]
+    ASR[AppSettingsRepository]
+    HSR[HighScoreRepository]
+  end
+  subgraph CORE["Domänenlogik (reines Kotlin, JVM-testbar)"]
+    GS[GameSession] --> BG[BoardGenerator]
+    SN[SettingsNormalizer]
+    HR[HighScoreRanking] --> HE[HighScoreEntry]
+  end
+  MA --> UIK
+  MA --> GS
+  MA --> ASR --> SN
+  MA --> HSR --> HR
+```
+
+| Paket | Inhalt | Android-Abhängigkeit |
+| --- | --- | --- |
+| `game` | `BoardGenerator`, `GameSession`, `GameSnapshot` | keine |
+| `score` | `SettingsNormalizer`, `HighScoreEntry`, `HighScoreRanking`, `SettingsStorage` (Interface) | keine |
+| `score` (Repositories) | `AppSettingsRepository`, `HighScoreRepository` | `SharedPreferences`, `Base64` |
+| `ui` | eigene Views und Farb-/Animationshelfer | ja |
+| Root | `MainActivity` | ja |
+
+Architekturentscheidungen:
+- **Single Activity mit vier Panels** (Sichtbarkeitsumschaltung) statt vier Activities oder Fragments: kein Back-Stack-Management, Zustand an einer Stelle, keine Fragment-Bibliothek nötig. Nachteil: `MainActivity` wächst (≈ 540 Zeilen); gemildert durch Auslagerung der Views nach `ui/`.
+- **Zeitlose Domänenlogik:** `GameSession` erhält alle Zeitpunkte als Parameter (`tap(value, nowMillis)`), statt selbst eine Uhr zu lesen. Dadurch deterministisch testbar; die Activity liefert `SystemClock.elapsedRealtime()`.
+- **Injizierbare Zufallsquelle:** `BoardGenerator(random: Random = Random.Default)` – in Tests geseedete Instanzen (z. B. `Random(42L)`), in der App die Standardquelle.
+- **Unveränderliche Schnappschüsse:** `GameSnapshot` ist ein Datenobjekt; die UI rendert nur Snapshots und hält keinen eigenen Spielzustand. Wiederherstellung nach Rotation über `GameSession.restore(snapshot, startMillis)`.
+- **Repository-Muster mit reiner Normalisierung:** Validierung/Normalisierung (`SettingsNormalizer`, `HighScoreRanking`) ist von der Speicherung getrennt und separat getestet.
+
+## A5 Spiellogik als Zustandsautomat
+
+```mermaid
+stateDiagram-v2
+  [*] --> Laufend: start(n, t0)
+  Laufend --> Laufend: Treffer / score+1, neues Feld + Ziel
+  Laufend --> Laufend: Fehler (misses < 3) / misses+1, Feld bleibt
+  Laufend --> Beendet: 3. Fehler / Zeit einfrieren
+  Beendet --> Beendet: weitere Taps ohne Wirkung
+  Beendet --> Laufend: Nochmal (neue Session)
+```
+
+- Zeit: `elapsed = max(0, now − start)`, bei Spielende eingefroren (`finalElapsedMillis`).
+- Highscore-Speicherung genau einmal pro beendeter Runde (`savedThisRound`, rotationsfest im `Bundle`). Abbruch über ✕/Zurück speichert nicht (Begründung: Liste soll nur regulär beendete Runden vergleichen).
+
+## A6 Erzeugung der Zufallszahlen
+
+Ablauf in `BoardGenerator.generate(n)`:
+1. Liste der Zahlen `1..n²` erzeugen (9, 16 oder 25 Werte) – jede Zahl genau einmal.
+2. Mischen mit `MutableList.shuffle(random)` der Kotlin-Standardbibliothek. Implementierung (stdlib-Quellcode): moderner **Fisher-Yates-Shuffle** – für `i` von `lastIndex` bis 1 wird `j = random.nextInt(i + 1)` gezogen und Element `i` mit `j` getauscht. Jede der n²! Permutationen ist bei gleichverteiltem `nextInt` gleich wahrscheinlich; Laufzeit O(n²) bezogen auf die Feldgröße n.
+3. Zielzahl: `numbers[random.nextInt(numbers.size)]` – gleichverteilter Index, das Ziel liegt dadurch garantiert im sichtbaren Feld (keine unlösbaren Runden).
+4. Nach jedem Treffer wird ein komplett neues Feld mit neuem Ziel erzeugt; dasselbe Ziel kann zufällig erneut gezogen werden (unabhängige Ziehungen).
+
+Zufallsquelle:
+- App: `kotlin.random.Random.Default`. Laut stdlib-Quellcode delegiert es an eine plattformspezifische Implementierung (`defaultPlatformRandom()`); auf der JVM ist das entweder `ThreadLocalRandom` oder ein Fallback mit thread-lokaler `java.util.Random`-Instanz. Beides sind **Pseudozufallszahlengeneratoren (PRNG)**, nicht kryptografisch sicher – für ein Spiel ohne Sicherheitsrelevanz angemessen; `SecureRandom` wäre langsamer ohne Nutzen. Welche der beiden Varianten auf einem konkreten Android-Gerät greift, wurde nicht gemessen.
+- Tests: `Random(seed)` (deterministischer Kotlin-PRNG), damit Testläufe reproduzierbar sind (gleicher Seed ⇒ identisches Feld und Ziel, geprüft in `BoardGeneratorTest`).
+
+Quellen: [Kotlin `shuffle`](https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/shuffle.html), [Kotlin `Random.nextInt`](https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.random/-random/next-int.html), [stdlib `PlatformRandom.kt`](https://github.com/JetBrains/kotlin/blob/master/libraries/stdlib/jvm/src/kotlin/random/PlatformRandom.kt), [Android `ThreadLocalRandom`](https://developer.android.com/reference/kotlin/java/util/concurrent/ThreadLocalRandom).
+
+## A7 Zeitmessung
+
+- Spielzeit über `SystemClock.elapsedRealtime()` (monoton, läuft im Ruhezustand weiter, nicht durch Uhrzeitänderungen beeinflusst) – laut Android-Doku die empfohlene Basis für Intervalle.
+- `System.currentTimeMillis()` nur für den Abschlusszeitpunkt eines Highscore-Eintrags (Anzeige, Tie-Break).
+- UI-Aktualisierung jede Sekunde per `Handler`-Ticker, nur bei sichtbarem, laufendem Spiel (gestoppt bei Spielende, Panelwechsel, `onStop`).
+
+## A8 Persistenz
+
+| Daten | Ablage | Schlüssel | Regeln |
+| --- | --- | --- | --- |
+| Spielername | `switchsort_settings` | `player_name` | Trim; leer ⇒ „Gast“; > 24 Zeichen ⇒ Fehlermeldung, nichts gespeichert |
+| Feldgröße | `switchsort_settings` | `board_size` | nur 3/4/5, sonst 3 |
+| Darstellung | `switchsort_settings` | `theme_mode` | 0 System, 1 Hell, 2 Dunkel, sonst 0 |
+| Highscore | `switchsort_highscores` | `entries` | Top 10, Java-Serialisierung + Base64 |
+
+- Alle Preferences `MODE_PRIVATE`, `allowBackup="false"`, keine Berechtigungen, keine Netzwerkzugriffe, keine personenbezogenen Daten außer dem frei gewählten Spielernamen (lokal).
+- Robustheit: defekte/fremde Highscore-Daten (falscher Typ, kaputtes Base64, Stream-Fehler) ⇒ leere Liste und Schlüssel bereinigt statt Absturz.
+- Risiko Java-Serialisierung: versionsfragil und bei fremden Daten sicherheitskritisch; hier akzeptiert, weil ausschließlich app-eigene, private Daten gelesen werden und `serialVersionUID` fixiert ist. Kandidat für spätere Umstellung auf ein einfaches Textformat.
+
+## A9 UI- und Interaktionsdesign
+
+Entwicklung über drei Stände (Details und Messwerte in Teil B):
+
+| Stand | Leitidee | Kernelemente |
+| --- | --- | --- |
+| Mindestanforderungen | funktional | Plattform-Buttons, `GridLayout`, Textstatus |
+| Iteration 1 | „clean, Pastell, Hell/Dunkel“ | Cards, Pastellpalette, `values-night`, Theme-Umschalter |
+| Iteration 2 (aktuell) | minimalistischer Mobile-Game-Stil (Vorbild *Stack*, Ketchapp) | Vollflächiger Pastellverlauf mit Farbtonverschiebung pro Treffer, große dünne Zielzahl, Blöcke mit Tiefenkante, Mikroanimationen, Game-Over-Overlay |
+
+Gestaltungsprinzipien (Iteration 2):
+- **Reduktion:** eine Primäraktion pro Screen (Pill-Button), Nebenaktionen als Text-Buttons, keine Rahmen/Cards.
+- **Visuelle Hierarchie:** Zielzahl 96sp thin als einziges großes Element im Spiel; Status klein in der Kopfzeile; Fehlversuche als drei Punkte (schneller erfassbar als „0/3“).
+- **Feedback ohne zusätzliche Elemente:** Farbtonverschiebung des Hintergrunds (+18° pro Treffer) als Fortschrittsanzeige; Pop-Animation der Zielzahl; Pastellrot + Schütteln bei Fehler.
+- **Affordance:** dunklere Tiefenkante unter Blöcken/Buttons signalisiert „drückbar“; beim Drücken sinkt die Oberfläche ab.
+- **Lesbarkeit/Robustheit:** keine Zeilenumbrüche in Labels/Werten (Nutzervorgabe), `maxLines=1`, Auto-Size für die Wortmarke; geprüft bei 360dp und 412dp Breite.
+
+## A10 Darstellungsmodi (Hell/Dunkel)
+
+- Farben als Ressourcen in `values/` und `values-night/` mit identischen Namen; Systemmodus wirkt automatisch.
+- Manueller Override ohne AppCompat: `attachBaseContext` erzeugt per `createConfigurationContext` einen Kontext mit gesetztem `uiMode`-Nachtflag; Wechsel in den Optionen ⇒ `recreate()`.
+- Code fragt den effektiven Modus über `R.bool.is_night` ab (berücksichtigt den Override, anders als die System-Konfiguration).
+
+## A11 Qualitätssicherung
+
+| Maßnahme | Stand |
+| --- | --- |
+| JVM-Unit-Tests | 37 Tests (GameSession 10, BoardGenerator 7, HighScoreRanking 7, SettingsNormalizer 13), alle grün |
+| Teststil | Verhaltenstests, fester Seed, keine Mocks, keine Tests trivialer Getter |
+| Statische Analyse | Android Lint: 0 Errors, 3 Warnings (bewusst akzeptiert: targetSdk/compileSdk 35, `DataExtractionRules`) |
+| UI-Verifikation | Emulator Pixel 7 (1080×2400, 420 dpi, API 35): Screenshots hell/dunkel, 3×3/5×5, Treffer, Fehler, Spielende, Rotation, 360dp-Breite |
+| Nicht abgedeckt | instrumentierte UI-Tests, WCAG-Kontrastberechnung, Frame-Timing, API 23–25 auf Gerät |
+
+## A12 Build, Toolchain und Supply-Chain-Sicherheit
+
+- Versionen exakt gepinnt; Gradle-Wrapper mit `distributionSha256Sum`, Wrapper-JAR gegen offizielle Prüfsumme geprüft.
+- Gradle < 8.14.4 wegen CVE-2026-22816/-22865 (High) ausgeschlossen.
+- AGP deklariert Bouncy Castle 1.79 (CVE-2025-14813, Critical, GOST-CTR). Vorgehen: (1) Erreichbarkeitsanalyse – der verwundbare Pfad wird im APK-Build/Signieren nicht genutzt; (2) zusätzlich Auflösung auf 1.86 per BOM-Constraint auf dem Buildscript-Classpath (kein `force`). Diskussionswürdig für die Arbeit: Unterschied zwischen *enthaltenem* und *erreichbarem* verwundbarem Code.
+- AGP 9 verbietet das separate `org.jetbrains.kotlin.android`-Plugin (Built-in-Kotlin) – Erkenntnis aus dem ersten Build, Entscheidung revidiert.
+- Keine Laufzeitabhängigkeiten im APK; einzige Testabhängigkeit JUnit 4.13.2 (+ hamcrest-core 1.3).
+
+## A13 Versionsverwaltung und Arbeitsablauf
+
+- Git/GitHub, Feature-Branches (`initial-setup`, `feature/design`), `main` als Default-Branch mit Ruleset: Änderungen nur per Pull Request, kein Force-Push, kein Löschen.
+- Commit-Nachrichten beschreiben Zweck und Verifikationsstand.
+
+## A14 Grenzen und offene Punkte
+
+- WCAG-Kontraste nicht berechnet; Pastelltöne bewusst weich.
+- Animationen nicht auf Frame-Timing gemessen; „Animationen entfernen“ (Barrierefreiheit) nicht berücksichtigt.
+- Querformat nutzbar, aber nicht gestaltet.
+- API 23–25 nicht auf Gerät/Emulator geprüft.
+- `onBackPressed` veraltet (API 33+), Umstellung auf `OnBackInvokedCallback` offen.
+- Java-Serialisierung des Highscores (siehe A8).
+- Keine instrumentierten UI-Tests.
+
+## A15 Literatur und Quellen
+
+- Richter, E. (2021): *Android-Apps programmieren – Professionelle App-Entwicklung mit Android Studio 4.* (Literaturvorgabe des Themenblatts; im Projekt bisher nur als Referenz, keine Detailzitate.)
+- Android Developers: [SharedPreferences](https://developer.android.com/training/data-storage/shared-preferences), [SystemClock](https://developer.android.com/reference/android/os/SystemClock), [Dark Theme](https://developer.android.com/develop/ui/views/theming/darktheme), [Adaptive Icons](https://developer.android.com/develop/ui/views/launch/icon_design_adaptive), [AGP-Versionen](https://developer.android.com/build/releases/about-agp), [Built-in Kotlin](https://developer.android.com/build/migrate-to-built-in-kotlin).
+- Kotlin: [shuffle](https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/shuffle.html), [Random](https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.random/-random/), [KGP-Kompatibilität](https://kotlinlang.org/docs/gradle-configure-project.html).
+- Sicherheit: [GHSA-574f-3g2m-x479](https://github.com/advisories/GHSA-574f-3g2m-x479), [Gradle 8.14.4 Release](https://github.com/gradle/gradle/releases/tag/v8.14.4), [Gradle-Prüfsummen](https://gradle.org/release-checksums/).
+- Gestaltungsvorbild: *Stack* (Ketchapp), Mobile Game – nur als stilistische Referenz.
+
+---
+
+# Teil B — Chronologisches Entwicklungsprotokoll
 
 ## 2026-10-06 — Setup- und Sicherheitsprüfung
 
@@ -191,3 +391,10 @@ Hinweis: In den Vorexperimenten wurde `GRADLE_USER_HOME=<projekt>/.gradle-home` 
 - API 23–25 (Icon-Fallback, transparente Leisten ohne Edge-to-Edge) nicht auf einem Gerät/Emulator geprüft.
 - `onBackPressed` ist ab API 33 veraltet (Compiler-Warnung, bestand schon vorher); eine Umstellung auf `OnBackInvokedCallback` steht aus.
 
+
+## 2026-10-06 — Umstrukturierung der Dokumentation
+
+- **Anlass (Nutzervorgabe):** Die Dokumentation dient als Grundlage der wissenschaftlichen Arbeit und muss Architektur-, Technologie- und Implementierungsentscheidungen vollständig und aktuell abbilden.
+- **Entscheidung:** Zweiteilung. Teil A als aktueller, thematisch gegliederter Stand (A1–A15: Anforderungsabdeckung, Vorgehensmodell, Technologieentscheidungen mit Alternativen, Architektur mit Paket- und Zustandsdiagramm, Zufallszahlenerzeugung, Zeitmessung, Persistenz, Design, Theming, Qualitätssicherung, Supply-Chain, Workflow, Grenzen, Quellen). Teil B bleibt chronologisch und unverändert, damit verworfene Wege (z. B. explizites Kotlin-Plugin, Card-Design) nachvollziehbar bleiben.
+- **Neu dokumentiert:** Zufallszahlenerzeugung nach Themenblatt-Vorgabe (Fisher-Yates-Shuffle aus der Kotlin-stdlib, Ziel per gleichverteiltem Index, PRNG statt SecureRandom mit Begründung, Seeds in Tests), belegt am stdlib-Quellcode.
+- **Prozessregel:** `AGENTS.md` im Repo legt fest, dass jede Änderung Teil A aktualisiert und in Teil B protokolliert wird, im selben Commit.
