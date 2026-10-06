@@ -24,8 +24,8 @@
             android:padding="@dimen/screen_padding">
 
             <ImageView
-                android:layout_width="144dp"
-                android:layout_height="144dp"
+                android:layout_width="176dp"
+                android:layout_height="176dp"
                 android:importantForAccessibility="no"
                 android:src="@drawable/ic_launcher_fg" />
 
@@ -46,16 +46,6 @@
                 android:textSize="44sp"
                 tools:targetApi="o" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:letterSpacing="0.08"
-                android:maxLines="1"
-                android:text="@string/menu_subtitle"
-                android:textColor="@color/textSecondary"
-                android:textSize="15sp" />
-
             <Button
                 android:id="@+id/btn_start"
                 style="@style/SwitchSort.Pill"
@@ -63,41 +53,26 @@
                 android:text="@string/menu_start" />
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="@dimen/pill_width"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:gravity="center_vertical"
+                android:layout_marginTop="16dp"
                 android:orientation="horizontal">
 
                 <Button
                     android:id="@+id/btn_scores"
-                    style="@style/SwitchSort.TextButton"
+                    style="@style/SwitchSort.Chip"
                     android:text="@string/menu_scores" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:importantForAccessibility="no"
-                    android:text="@string/menu_separator"
-                    android:textColor="@color/textSecondary"
-                    android:textSize="15sp" />
 
                 <Button
                     android:id="@+id/btn_options"
-                    style="@style/SwitchSort.TextButton"
+                    style="@style/SwitchSort.Chip"
+                    android:layout_marginStart="@dimen/chip_gap"
                     android:text="@string/menu_options" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:importantForAccessibility="no"
-                    android:text="@string/menu_separator"
-                    android:textColor="@color/textSecondary"
-                    android:textSize="15sp" />
 
                 <Button
                     android:id="@+id/btn_exit"
-                    style="@style/SwitchSort.TextButton"
+                    style="@style/SwitchSort.Chip"
+                    android:layout_marginStart="@dimen/chip_gap"
                     android:text="@string/menu_exit" />
             </LinearLayout>
         </LinearLayout>

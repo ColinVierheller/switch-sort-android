@@ -5,12 +5,10 @@
 
     <!-- Hauptmenü -->
     <string name="menu_title">SWITCHSORT</string>
-    <string name="menu_subtitle">finde die Zahl</string>
     <string name="menu_start">Spielen</string>
     <string name="menu_scores">Highscore</string>
     <string name="menu_options">Optionen</string>
     <string name="menu_exit">Beenden</string>
-    <string name="menu_separator">·</string>
 
     <!-- Optionen -->
     <string name="options_title">Optionen</string>

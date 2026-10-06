@@ -19,4 +19,7 @@
     <color name="glassFill">#1AFFFFFF</color>
     <color name="segmentSelected">#33FFFFFF</color>
     <color name="ripple">#33FFFFFF</color>
+
+    <color name="chipSurface">#24FFFFFF</color>
+    <color name="chipEdge">#59000000</color>
 </resources>

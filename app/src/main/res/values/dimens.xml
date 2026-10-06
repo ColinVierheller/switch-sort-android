@@ -8,6 +8,9 @@
     <dimen name="pill_width">264dp</dimen>
     <dimen name="pill_height">64dp</dimen>
     <dimen name="pill_depth">4dp</dimen>
+    <dimen name="chip_height">52dp</dimen>
+    <dimen name="chip_depth">3dp</dimen>
+    <dimen name="chip_gap">8dp</dimen>
     <dimen name="screen_padding">28dp</dimen>
     <dimen name="target_text">96sp</dimen>
     <dimen name="target_label_margin">24dp</dimen>

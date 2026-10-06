@@ -15,7 +15,7 @@ Quelle: Themenblatt „SwitchSort für Android“ (D. Rietz, DHBW Stuttgart, Sta
 | Anforderung (Themenblatt) | Umsetzung | Nachweis |
 | --- | --- | --- |
 | Android-App | Native Kotlin-App, minSdk 23, targetSdk 35 | `assembleDebug`, Emulator Pixel 7 / API 35 |
-| Einstiegsmenü: Spiel starten, Highscore, Optionen, Beenden | Menü-Panel mit „SPIELEN“ und Text-Aktionen; Beenden = `finish()` | Emulator-Screenshots |
+| Einstiegsmenü: Spiel starten, Highscore, Optionen, Beenden | Menü-Panel mit Primär-Pill „SPIELEN“ und drei Block-Buttons darunter; Beenden = `finish()` | Emulator-Screenshots |
 | Spielfeld 3×3 / 4×4 / 5×5 | `BoardGenerator` (n ∈ {3,4,5}), `BoardView` | `BoardGeneratorTest`, Screenshots 3×3/5×5 |
 | Optionen: Spielername, Spielfeldwahl | Namensfeld (Trim, 1–24 Zeichen, sonst „Gast“), Segment-Auswahl Feldgröße, zusätzlich Darstellungsmodus | `SettingsNormalizerTest` |
 | Highscore: Anzahl gefundener Zahlen | Top 10 lokal, sortiert Treffer ↓, Dauer ↑, Zeitpunkt ↑ | `HighScoreRankingTest` |
@@ -143,7 +143,8 @@ Entwicklung über drei Stände (Details und Messwerte in Teil B):
 | Iteration 2 (aktuell) | minimalistischer Mobile-Game-Stil (Vorbild *Stack*, Ketchapp) | Vollflächiger Pastellverlauf mit Farbtonverschiebung pro Treffer, große dünne Zielzahl, Blöcke mit Tiefenkante, Mikroanimationen, Game-Over-Overlay |
 
 Gestaltungsprinzipien (Iteration 2):
-- **Reduktion:** eine Primäraktion pro Screen (Pill-Button), Nebenaktionen als Text-Buttons, keine Rahmen/Cards.
+- **Reduktion:** eine Primäraktion pro Screen (Pill-Button), keine Rahmen/Cards, kein Slogan im Menü. Menü-Nebenaktionen (Highscore, Optionen, Beenden) als kleinere Blöcke mit Tiefenkante in einer Zeile – reine Text-Buttons wurden im Nutzertest nicht als klickbar erkannt (Affordance-Problem). Nebenaktionen auf Unterseiten („Zurück“, „Menü“) sind weiterhin Text-Buttons.
+- **Logo mit Spielbezug:** 2×2-Ausschnitt eines gemischten Spielfelds (3 1 / 4 2) als Blöcke mit Tiefenkante; der Akzentblock „1“ steht für die gesuchte Zahl. Gleiches Vektor-Motiv für Menü-Logo und Launcher-Icon (Wiedererkennung). Ziffern als Strichpfade, da Vector Drawables keinen Text darstellen.
 - **Visuelle Hierarchie:** Zielzahl 96sp thin als einziges großes Element im Spiel; Status klein in der Kopfzeile; Fehlversuche als drei Punkte (schneller erfassbar als „0/3“).
 - **Feedback ohne zusätzliche Elemente:** Farbtonverschiebung des Hintergrunds (+18° pro Treffer) als Fortschrittsanzeige; Pop-Animation der Zielzahl; Pastellrot + Schütteln bei Fehler.
 - **Affordance:** dunklere Tiefenkante unter Blöcken/Buttons signalisiert „drückbar“; beim Drücken sinkt die Oberfläche ab.
@@ -398,3 +399,11 @@ Hinweis: In den Vorexperimenten wurde `GRADLE_USER_HOME=<projekt>/.gradle-home` 
 - **Entscheidung:** Zweiteilung. Teil A als aktueller, thematisch gegliederter Stand (A1–A15: Anforderungsabdeckung, Vorgehensmodell, Technologieentscheidungen mit Alternativen, Architektur mit Paket- und Zustandsdiagramm, Zufallszahlenerzeugung, Zeitmessung, Persistenz, Design, Theming, Qualitätssicherung, Supply-Chain, Workflow, Grenzen, Quellen). Teil B bleibt chronologisch und unverändert, damit verworfene Wege (z. B. explizites Kotlin-Plugin, Card-Design) nachvollziehbar bleiben.
 - **Neu dokumentiert:** Zufallszahlenerzeugung nach Themenblatt-Vorgabe (Fisher-Yates-Shuffle aus der Kotlin-stdlib, Ziel per gleichverteiltem Index, PRNG statt SecureRandom mit Begründung, Seeds in Tests), belegt am stdlib-Quellcode.
 - **Prozessregel:** `AGENTS.md` im Repo legt fest, dass jede Änderung Teil A aktualisiert und in Teil B protokolliert wird, im selben Commit.
+
+## 2026-10-06 — Menü-Feinschliff nach Nutzerfeedback (feature/design)
+
+- **Feedback:** (1) Logo ohne Bezug zum Spiel, (2) Slogan „finde die Zahl“ überflüssig, (3) Highscore/Optionen/Beenden wirken nicht wie klickbare Buttons.
+- **Logo:** Gestapelte Balken ersetzt durch einen 2×2-Ausschnitt eines gemischten Spielfelds mit den Ziffern 3 1 / 4 2; Blöcke mit hellerer Oberfläche und dunklerer Tiefenkante wie im Spiel, der Block „1“ in Akzentfarbe als gesuchte Zahl. Ziffern als gerundete Strichpfade (Vector Drawables unterstützen keinen Text, eine Schriftdatei als Asset wäre zusätzliche Lizenz-/Größenlast). Dasselbe Drawable dient als Menü-Logo (176dp) und Vordergrund des adaptiven Launcher-Icons; neue Farbe `iconDigit`. Alternative verworfen: Pfeil-/Tausch-Symbolik (zusätzliches Element, weniger clean).
+- **Slogan:** entfernt (Layout und String `menu_subtitle`); zusammen mit den Trennpunkten (`menu_separator`) ungenutzte Ressourcen gelöscht.
+- **Buttons:** Text-Buttons durch Stil `SwitchSort.Chip` ersetzt: gleich breite Blöcke (3 × 1/3 der Pill-Breite, 8dp Abstand, 52dp hoch) mit halbtransparenter Oberfläche und 3dp Tiefenkante (`bg_chip`, gedrückt sinkt die Oberfläche ab), Text 14sp medium in `textPrimary`. Begründung: gleiche Formsprache wie Pill und Spielblöcke, Hierarchie bleibt erhalten (Pill groß/opak = Primär, Chips klein/halbtransparent = sekundär).
+- **Verifikation (ausgeführt):** `testDebugUnitTest lintDebug assembleDebug` → BUILD SUCCESSFUL, 37 Tests grün, Lint 0 Errors / 3 Warnings (unverändert). Emulator Pixel 7: Menü hell und dunkel, 360dp Breite (`wm density 480`) ohne Umbrüche („Highscore“ passt in eine Zeile), Launcher-Icon im App-Drawer geprüft. Hinweis: Der app-interne Darstellungsmodus stand aus einem früheren Test auf „Dunkel“ und wurde für die Hell-Prüfung auf „System“ zurückgestellt.

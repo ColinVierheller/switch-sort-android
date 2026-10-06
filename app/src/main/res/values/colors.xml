@@ -32,4 +32,9 @@
     <color name="iconBlockEdge">#8C9BC9</color>
     <color name="iconBlockAccent">#F6C3B5</color>
     <color name="iconBlockAccentEdge">#D3907F</color>
+    <color name="iconDigit">#454A6B</color>
+
+    <!-- Nebenaktionen im Menü: kleine Blöcke mit Tiefenkante -->
+    <color name="chipSurface">#8CFFFFFF</color>
+    <color name="chipEdge">#1A000000</color>
 </resources>

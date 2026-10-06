@@ -51,6 +51,26 @@
         <item name="android:maxLines">1</item>
     </style>
 
+    <!-- Nebenaktion im Menü: kleiner Block mit Tiefenkante, gleich breit
+         verteilt in einer Zeile unter der Pill. -->
+    <style name="SwitchSort.Chip" parent="">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">@dimen/chip_height</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:paddingStart">2dp</item>
+        <item name="android:paddingEnd">2dp</item>
+        <item name="android:paddingBottom">@dimen/chip_depth</item>
+        <item name="android:background">@drawable/bg_chip</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/textPrimary</item>
+        <item name="android:maxLines">1</item>
+    </style>
+
     <!-- Segment innerhalb einer RadioGroup (Ersatz für Radio-Kreise). -->
     <style name="SwitchSort.Segment" parent="">
         <item name="android:layout_width">0dp</item>
