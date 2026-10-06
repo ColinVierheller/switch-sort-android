@@ -138,3 +138,56 @@ Hinweis: In den Vorexperimenten wurde `GRADLE_USER_HOME=<projekt>/.gradle-home` 
 
 - [Android: Dark Theme (Views)](https://developer.android.com/develop/ui/views/theming/darktheme) – Herangehen mit `values-night`-Ressourcen.
 - [Android: Adaptive Icons](https://developer.android.com/develop/ui/views/launch/icon_design_adaptive) – Aufbau und Fallback-Regeln der Launcher-Icons.
+
+## Redesign im Stil minimalistischer Mobile Games (feature/design, Iteration 2)
+
+**Anforderung (Nutzer):** „deutlich schöner, moderner, hochauflösender“, Orientierung am Handyspiel *Stack* (Ketchapp). Randbedingungen unverändert: klassische Views, keine neuen Abhängigkeiten, kein AndroidX/Compose, Spiellogik (`game/`, `score/`) und Tests unangetastet, Hell/Dunkel/System-Umschalter bleibt. Ausdrücklich: keine Zeilenumbrüche in Labels, Werten oder Buttons.
+
+### Gestaltungsprinzipien
+
+- **Reduktion:** Cards, Rahmen und flächige Sekundär-Buttons entfallen. Inhalte liegen direkt auf dem Hintergrund; Nebenaktionen („Highscore · Optionen · Beenden“, „Zurück“, „Menü“) sind reine Text-Buttons. Pro Screen gibt es genau eine Primäraktion als Pill-Button.
+- **Fokus auf eine Zahl:** Im Spiel steht die Zielzahl groß und dünn (sans-serif-thin, 96sp) im Zentrum; Treffer, Zeit und Versuche sind klein in einer Kopfzeile. Fehlversuche werden als drei Punkte (gefüllt = verbleibend, Ring = verbraucht) statt als „0/3“ dargestellt. Auf dem Spielende-Screen ist die Trefferzahl (80sp) das einzige große Element.
+- **Verlauf mit Farbtonverschiebung als Fortschritts-Feedback:** Vollflächiger vertikaler Verlauf aus zwei Tönen. Jeder Treffer verschiebt den Farbton um 18° (600 ms Animation); Fehler verändern ihn nicht. Damit ist Fortschritt ohne zusätzliches UI-Element wahrnehmbar. Im Menü pendelt der Ton langsam (±40° über 24 s). Sättigung/Helligkeit sind je Modus fest (hell: S 0,22–0,34, V 0,95–1,0; dunkel: S 0,38–0,42, V 0,17–0,28), sodass jeder Farbton pastellig bzw. gedeckt bleibt. Die Textfarbe der Pill-Buttons und der Hinweis „Neuer Rekord“ werden aus dem aktuellen Farbton abgeleitet.
+- **Tiefenkante als Affordance:** Spielfeld-Blöcke und Pill-Buttons haben eine um 4dp versetzte dunklere Kante unter der Oberfläche. Beim Drücken sinkt die Oberfläche auf die Kante – das signalisiert „tippbar“ und gibt haptisch wirkendes Feedback, ohne Schatten oder Elevation.
+- **Mikroanimationen als Feedback:** Tap: Skalierung 0,92 → 1 (Overshoot). Treffer: Zielzahl „poppt“ (1,15 → 1), neue Blöcke blenden gestaffelt ein (Verzögerung max. 15 ms pro Block, Gesamtdauer ≤ 280 ms). Fehler: getippter Block wird kurz pastellrot und schüttelt horizontal (250 ms). Spielende: Spielfeld blendet aus, Ergebnis blendet ein (300 ms nach 250 ms Verzögerung, damit das letzte Schütteln sichtbar bleibt).
+
+### Technische Umsetzung
+
+- **Nur Plattform-APIs:** `GradientDrawable` (Verlauf), `ValueAnimator`/`ObjectAnimator`/`ViewPropertyAnimator` mit Plattform-Interpolatoren, `Canvas`/`Path.op` (Tiefenkante), `StateListDrawable`/`layer-list` (Pill). Begründung gegen Bibliotheken (z. B. Lottie, Material Components): Der Effekt ist mit wenigen Zeilen Plattformcode erreichbar; jede Bibliothek wäre eine neue Abhängigkeit mit eigener CVE-/Lizenzprüfung und hätte die bewusst AndroidX-freie Architektur gebrochen.
+- **Neue Klassen in `de.dhbw.switchsort.ui`:**
+  - `Palette` – Farbtonkonstanten (Startton, Schrittweite, Animationsdauern) und HSV-Ableitung von Verlauf, Akzent und Hervorhebung je Modus.
+  - `GradientBackground` – hält den Verlauf als Fensterhintergrund, animiert Farbtonsprung und Leerlauf-Pendeln, meldet Tonänderungen per Callback.
+  - `BlockCellView` – Zelle als `TextView`-Unterklasse; zeichnet Kante als Pfaddifferenz Basis − Oberfläche, weil sich halbtransparente Flächen sonst überlagern und die Oberfläche abdunkeln würden. Kapselt Tap- und Fehleranimation und bricht sie in `onDetachedFromWindow` ab.
+  - `BoardView` – eigene `ViewGroup` für das n×n-Feld: Kantenlänge = min(verfügbare Breite, verfügbare Höhe, 420dp), Abstand 8dp; Schriftgröße 24/22/20sp für n = 3/4/5, bei kleinen Zellen (Querformat) auf 40 % der Zellgröße begrenzt.
+  - `MissDotsView` – drei Punkte inkl. `contentDescription` für Screenreader.
+  - `ScoreListRenderer` – Highscore-Zeilen aus `item_score.xml` (Rang dünn, Name + Feldgröße/Zeit, Treffer fett; Platz 1 mit halbtransparenter Fläche hinterlegt).
+- **MainActivity:** Feld wird nur bei geändertem Brett neu aufgebaut (bei Fehlversuchen bleibt die getippte Zelle für die Animation erhalten). Treffer werden über den Score-Vergleich vor/nach `GameSession.tap` erkannt. „Neuer Rekord“ = erster Eintrag der von `HighScoreRepository.add` zurückgegebenen Liste ist der neue Eintrag. Farbton und Rekord-Flag werden in `onSaveInstanceState` mitgesichert; das Speichern genau einmal pro Runde (`savedThisRound`) und „Abbruch speichert nichts“ sind unverändert. Animationen werden bei Panelwechsel, Neustart der Runde und `onDestroy` abgebrochen.
+- **Systemleisten:** `Theme.SwitchSort` (values und values-night) setzt Status- und Navigationsleiste transparent, `windowLightStatusBar`/`windowLightNavigationBar` je Modus; der Verlauf ist Fensterhintergrund und reicht damit hinter die Leisten. Das Root-Layout hält Inhalte per `fitsSystemWindows` frei. Der Hell/Dunkel-Zustand für den Code kommt aus `R.bool.is_night`, damit auch der manuelle Override aus `attachBaseContext` korrekt greift.
+- **Ressourcen:** alte Card-/Button-Drawables entfernt; Farben nur noch für Text, halbtransparente Flächen, Blöcke und Icon. Styles für Titel, Label, Pill, Text-Button und Segment in `values/styles.xml`. Optionen nutzen RadioButtons als Segment-Optik (`button="@null"`, Hintergrund-Selector). `values-land/dimens.xml` verkleinert Zielzahl und Abstände im Querformat.
+
+### Hochauflösung
+
+- Ausschließlich Vektoren und Shapes, keine Bitmaps: Verlauf, Blöcke und Punkte werden zur Laufzeit gezeichnet; Schließen-Symbol und Launcher-Icon sind Vector Drawables. Neues Launcher-Icon: drei versetzt gestapelte Blöcke mit hellerer Oberseite und dunklerer Kante auf Pastellverlauf (`ic_launcher_fg`, `ic_launcher_bg`), Fallbacks für API 23–25 angepasst.
+- Verifikation auf dem AVD „switchsort“ (Pixel 7, 1080×2400, 420 dpi, API 35) statt eines mdpi-Profils, damit Darstellungsfehler bei realer Pixeldichte sichtbar werden. Zusätzlich 360dp Breite simuliert (`wm density 480`).
+
+### Verifikation (ausgeführt)
+
+- `./gradlew clean testDebugUnitTest lintDebug assembleDebug` → **BUILD SUCCESSFUL**; 37 Tests, 0 Failures, 0 Errors (GameSession 10, BoardGenerator 7, HighScoreRanking 7, SettingsNormalizer 13).
+- **Lint:** 0 Errors, 3 Warnings (vorher 15): `OldTargetApi`, `GradleDependency` (targetSdk/compileSdk 35 bewusst), `DataExtractionRules` (`allowBackup=false` genügt). Während der Iteration aufgetretene `SetTextI18n` und `PluralsCandidate` wurden behoben.
+- **Emulator, per Screenshot geprüft:**
+  - Menü hell und dunkel (System-Nachtmodus); manueller Override „Hell“ bei System-Dunkel wirkt nach `recreate()`.
+  - Spiel 3×3 und 5×5; Treffer verschiebt den Farbton sichtbar (Blau → Lila, im Dunkelmodus Schiefer → Indigo/Violett); Fehlversuch zeigt Pastellrot und Schütteln; Punkte leeren sich.
+  - Spielende nach 3 Fehlern: Overlay mit Trefferzahl, Zeit, Pill „NOCHMAL“, „Menü“; „Neuer Rekord“ erscheint nur, wenn die Runde Platz 1 wird (dunkel geprüft, nach Kontrastkorrektur lesbar).
+  - Rotation bei beendeter und bei laufender Runde: Zustand bleibt erhalten, Zeit läuft weiter, kein doppelter Highscore-Eintrag (5 beendete Runden → 5 Einträge).
+  - Optionen und Highscore hell/dunkel; bei 360dp Breite (Menü, 5×5, Optionen) keine abgeschnittenen Texte und keine Zeilenumbrüche.
+  - Launcher-Icon im App-Drawer.
+- **Während der Prüfung korrigiert:** halbtransparenter Scrim des Spielende-Overlays ließ das Spielfeld durchscheinen und endete an den Systemleisten → ersetzt durch Ausblenden des Spielfelds; Kopfzeile Treffer/Versuche vertikal angeglichen; „Neuer Rekord“ im Dunkelmodus zu dunkel → eigene helle Hervorhebungsfarbe; Querformat-Zellen mit überlaufender Schrift → Schrift und Eckradius skalieren mit der Zellgröße; Schütteln am Rand wurde durch `clipToPadding` beschnitten → abgeschaltet.
+
+### Offene Punkte
+
+- WCAG-Kontraste weiterhin nicht berechnet, insbesondere `textSecondary` auf hellen Verlaufstönen und Pill-Text im Dunkelmodus.
+- Animationen nur visuell im Emulator geprüft; Frame-Timing (z. B. per `gfxinfo`) nicht gemessen. Die Systemeinstellung „Animationen entfernen“ wird nicht gesondert behandelt.
+- Querformat ist nutzbar, aber nicht eigens gestaltet (Spielfeld bei 5×5 klein).
+- API 23–25 (Icon-Fallback, transparente Leisten ohne Edge-to-Edge) nicht auf einem Gerät/Emulator geprüft.
+- `onBackPressed` ist ab API 33 veraltet (Compiler-Warnung, bestand schon vorher); eine Umstellung auf `OnBackInvokedCallback` steht aus.
+

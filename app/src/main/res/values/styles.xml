@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Große, dünne Überschrift der Unterseiten. -->
+    <style name="SwitchSort.Title" parent="">
+        <item name="android:fontFamily">sans-serif-thin</item>
+        <item name="android:textSize">40sp</item>
+        <item name="android:textColor">@color/textPrimary</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <!-- Kleines, gesperrtes Label in Versalien. -->
+    <style name="SwitchSort.Label" parent="">
+        <item name="android:textSize">12sp</item>
+        <item name="android:letterSpacing">0.18</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@color/textSecondary</item>
+        <item name="android:maxLines">1</item>
+    </style>
+
+    <!-- Primäraktion: Pill mit Tiefenkante, Textfarbe setzt der Code
+         passend zum aktuellen Farbton. -->
+    <style name="SwitchSort.Pill" parent="">
+        <item name="android:layout_width">@dimen/pill_width</item>
+        <item name="android:layout_height">@dimen/pill_height</item>
+        <item name="android:background">@drawable/bg_pill</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:letterSpacing">0.2</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:paddingBottom">@dimen/pill_depth</item>
+        <item name="android:textColor">@color/textPrimary</item>
+    </style>
+
+    <!-- Nebenaktion: nur Text, kein Hintergrund. -->
+    <style name="SwitchSort.TextButton" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
+        <item name="android:background">@drawable/bg_text_button</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/textSecondary</item>
+        <item name="android:maxLines">1</item>
+    </style>
+
+    <!-- Segment innerhalb einer RadioGroup (Ersatz für Radio-Kreise). -->
+    <style name="SwitchSort.Segment" parent="">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">44dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:button">@null</item>
+        <item name="android:background">@drawable/bg_segment</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/segment_text</item>
+        <item name="android:maxLines">1</item>
+    </style>
+
+    <style name="SwitchSort.SegmentGroup" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:padding">4dp</item>
+        <item name="android:background">@drawable/bg_glass</item>
+    </style>
+</resources>

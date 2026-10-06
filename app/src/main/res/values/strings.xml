@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">SwitchSort</string>
+    <string name="number">%1$d</string>
 
     <!-- Hauptmenü -->
-    <string name="menu_title">SwitchSort</string>
-    <string name="menu_start">Spiel starten</string>
+    <string name="menu_title">SWITCHSORT</string>
+    <string name="menu_subtitle">finde die Zahl</string>
+    <string name="menu_start">Spielen</string>
     <string name="menu_scores">Highscore</string>
     <string name="menu_options">Optionen</string>
     <string name="menu_exit">Beenden</string>
+    <string name="menu_separator">·</string>
 
     <!-- Optionen -->
     <string name="options_title">Optionen</string>
@@ -28,18 +31,21 @@
     <!-- Highscore -->
     <string name="scores_title">Highscore</string>
     <string name="scores_empty">Noch keine Ergebnisse.</string>
-    <string name="scores_entry">%1$d. %2$s · %3$d×%3$d · %4$d Treffer · %5$s</string>
+    <string name="scores_meta">%1$d × %1$d · %2$s</string>
     <string name="scores_back">Zurück</string>
 
     <!-- Spiel -->
-    <string name="game_target">Suche die Zahl: %1$d</string>
+    <string name="game_target_label">Finde</string>
+    <string name="game_target">%1$d</string>
     <string name="game_score">%1$d</string>
-    <string name="game_misses">%1$d/%2$d</string>
     <string name="game_time">%1$s</string>
-    <string name="game_stat_label_score">TREFFER</string>
-    <string name="game_stat_label_misses">FEHLER</string>
-    <string name="game_stat_label_time">ZEIT</string>
-    <string name="game_finished">SPIELENDE – %1$d Treffer in %2$s</string>
-    <string name="game_restart">Nochmal spielen</string>
-    <string name="game_to_menu">Zurück zum Menü</string>
+    <string name="game_stat_label_score">Treffer</string>
+    <string name="game_stat_label_misses">Versuche</string>
+    <string name="game_misses_description">Verbleibende Versuche: %1$d/%2$d</string>
+    <string name="game_close">Runde abbrechen</string>
+    <string name="game_over_label">Treffer</string>
+    <string name="game_over_time">Zeit %1$s</string>
+    <string name="game_new_record">Neuer Rekord</string>
+    <string name="game_restart">Nochmal</string>
+    <string name="game_to_menu">Menü</string>
 </resources>

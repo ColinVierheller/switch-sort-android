@@ -1,18 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Helle Pastell-Palette. Die gleichen Farbnamen existieren in
-     values-night/colors.xml; Layouts und Code referenzieren ausschließlich
-     die Namen, sodass der Nachtmodus rein über Ressourcen klappt. -->
+<!-- Helle Palette. Gleiche Namen in values-night/colors.xml.
+     Der Hintergrundverlauf selbst entsteht im Code (ui/Palette.kt);
+     alle übrigen Flächen sind halbtransparent und nehmen dessen Ton an. -->
 <resources>
-    <color name="background">#FBF8F4</color>
-    <color name="surface">#FFFFFF</color>
-    <color name="primary">#8FB3D9</color>
-    <color name="primaryText">#FFFFFF</color>
-    <color name="accent">#F2B8A7</color>
-    <color name="accentSoft">#33F2B8A7</color>
-    <color name="cellBackground">#EAE4EF</color>
-    <color name="cellBackgroundPressed">#DBD1E3</color>
-    <color name="textPrimary">#3A3632</color>
-    <color name="textSecondary">#8A857F</color>
-    <color name="boardStroke">#E3DED7</color>
-    <color name="errorColor">#B00020</color>
+    <color name="textPrimary">#38353A</color>
+    <color name="textSecondary">#7A7580</color>
+    <color name="errorColor">#B3261E</color>
+
+    <!-- Startverlauf vor dem ersten Frame (entspricht Palette.START_HUE) -->
+    <color name="windowGradientTop">#C7ECFF</color>
+    <color name="windowGradientBottom">#A0A8F2</color>
+
+    <!-- Spielfeld-Blöcke -->
+    <color name="cellSurface">#D9FFFFFF</color>
+    <color name="cellEdge">#21000000</color>
+    <color name="cellError">#F4ABA8</color>
+
+    <!-- Pill-Button mit Tiefenkante -->
+    <color name="pillSurface">#FFFFFF</color>
+    <color name="pillEdge">#1F000000</color>
+
+    <!-- Halbtransparente Flächen auf dem Verlauf -->
+    <color name="glassFill">#66FFFFFF</color>
+    <color name="segmentSelected">#FFFFFF</color>
+    <color name="ripple">#1F000000</color>
+
+    <!-- Launcher-Icon (nicht modusabhängig) -->
+    <color name="iconBgTop">#CDEBFA</color>
+    <color name="iconBgBottom">#B7C4F2</color>
+    <color name="iconBlockTop">#FFFFFF</color>
+    <color name="iconBlockEdge">#8C9BC9</color>
+    <color name="iconBlockAccent">#F6C3B5</color>
+    <color name="iconBlockAccentEdge">#D3907F</color>
 </resources>

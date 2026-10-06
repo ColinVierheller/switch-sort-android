@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="board_gap">8dp</dimen>
+    <dimen name="board_max_size">420dp</dimen>
+    <dimen name="cell_text_3">24sp</dimen>
+    <dimen name="cell_text_4">22sp</dimen>
+    <dimen name="cell_text_5">20sp</dimen>
+    <dimen name="pill_width">264dp</dimen>
+    <dimen name="pill_height">64dp</dimen>
+    <dimen name="pill_depth">4dp</dimen>
+    <dimen name="screen_padding">28dp</dimen>
+    <dimen name="target_text">96sp</dimen>
+    <dimen name="target_label_margin">24dp</dimen>
+    <dimen name="board_margin_top">16dp</dimen>
+</resources>

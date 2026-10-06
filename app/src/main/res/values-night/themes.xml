@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Plattform-Theme ohne AndroidX. Systemleisten sind transparent,
-         damit der Verlauf (Fensterhintergrund) bis an den Rand reicht;
-         das Root-Layout hält Inhalte per fitsSystemWindows frei. -->
-    <style name="Theme.SwitchSort" parent="@android:style/Theme.Material.Light.NoActionBar">
+    <!-- Dunkles Gegenstück: dunkle Plattform-Basis, helle Systemsymbole. -->
+    <style name="Theme.SwitchSort" parent="@android:style/Theme.Material.NoActionBar">
         <item name="android:colorAccent">@color/textPrimary</item>
         <item name="android:windowBackground">@drawable/bg_window</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
-        <item name="android:windowLightStatusBar">true</item>
-        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">false</item>
         <item name="android:enforceNavigationBarContrast" tools:targetApi="q">false</item>
         <item name="android:enforceStatusBarContrast" tools:targetApi="q">false</item>
     </style>

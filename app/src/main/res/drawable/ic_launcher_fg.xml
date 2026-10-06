@@ -1,21 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Launcher-Vordergrund: drei gestapelte abgerundete Quadrate in der
-     Pastell-Palette (accent / primary / cellBackground). Viewport 108x108
-     gemäß Adaptive-Icon-Regel, Motiv bleibt in der sicheren Mittelzone. -->
+<!-- Drei gestapelte Blöcke mit hellerer Oberseite und dunklerer
+     Tiefenkante, leicht versetzt wie ein wachsender Turm.
+     Viewport 108x108, Motiv innerhalb der sicheren Zone (Radius 33). -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
     <path
-        android:fillColor="@color/accent"
-        android:pathData="M 53,32 L 67,32 Q 74,32 74,39 L 74,53 Q 74,60 67,60 L 53,60 Q 46,60 46,53 L 46,39 Q 46,32 53,32 Z" />
+        android:fillColor="@color/iconBlockEdge"
+        android:pathData="M38,67 L72,67 Q75,67 75,70 L75,75 Q75,78 72,78 L38,78 Q35,78 35,75 L35,70 Q35,67 38,67 Z" />
     <path
-        android:fillColor="@color/primary"
-        android:pathData="M 47,40 L 61,40 Q 68,40 68,47 L 68,61 Q 68,68 61,68 L 47,68 Q 40,68 40,61 L 40,47 Q 40,40 47,40 Z" />
+        android:fillColor="@color/iconBlockTop"
+        android:pathData="M38,63 L72,63 Q75,63 75,66 L75,71 Q75,74 72,74 L38,74 Q35,74 35,71 L35,66 Q35,63 38,63 Z" />
     <path
-        android:fillColor="@color/cellBackground"
-        android:strokeColor="@color/boardStroke"
-        android:strokeWidth="1.5"
-        android:pathData="M 41,48 L 55,48 Q 62,48 62,55 L 62,69 Q 62,76 55,76 L 41,76 Q 34,76 34,69 L 34,55 Q 34,48 41,48 Z" />
+        android:fillColor="@color/iconBlockEdge"
+        android:pathData="M36,52 L68,52 Q71,52 71,55 L71,60 Q71,63 68,63 L36,63 Q33,63 33,60 L33,55 Q33,52 36,52 Z" />
+    <path
+        android:fillColor="@color/iconBlockTop"
+        android:pathData="M36,48 L68,48 Q71,48 71,51 L71,56 Q71,59 68,59 L36,59 Q33,59 33,56 L33,51 Q33,48 36,48 Z" />
+    <path
+        android:fillColor="@color/iconBlockAccentEdge"
+        android:pathData="M40,37 L70,37 Q73,37 73,40 L73,45 Q73,48 70,48 L40,48 Q37,48 37,45 L37,40 Q37,37 40,37 Z" />
+    <path
+        android:fillColor="@color/iconBlockAccent"
+        android:pathData="M40,33 L70,33 Q73,33 73,36 L73,41 Q73,44 70,44 L40,44 Q37,44 37,41 L37,36 Q37,33 40,33 Z" />
 </vector>
