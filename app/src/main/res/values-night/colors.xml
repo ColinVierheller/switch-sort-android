@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Dunkles Gegenstück zu values/colors.xml: identische Farbnamen,
+     dunkle Werte. Wird automatisch aktiv, wenn die UI-Konfiguration
+     Nachtmodus meldet (System oder manueller Override in MainActivity). -->
+<resources>
+    <color name="background">#1B1E26</color>
+    <color name="surface">#262B37</color>
+    <color name="primary">#8FB3D9</color>
+    <color name="primaryText">#1B1E26</color>
+    <color name="accent">#F2B8A7</color>
+    <color name="accentSoft">#2EF2B8A7</color>
+    <color name="cellBackground">#333A4A</color>
+    <color name="cellBackgroundPressed">#2A323F</color>
+    <color name="textPrimary">#EDE7DF</color>
+    <color name="textSecondary">#A39E96</color>
+    <color name="boardStroke">#3A4150</color>
+    <color name="errorColor">#E08B93</color>
+</resources>

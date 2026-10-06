@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Root-Theme bleibt die Plattform-Basis Theme.Material.Light.NoActionBar
+         (kein AndroidX/Material3). Überschrieben wird nur der Akzent, damit
+         Plattform-Widgets (RadioButton, EditText-Unterstrich) zur Palette
+         passen; @color/primary flipt automatisch mit values-night. -->
+    <style name="Theme.SwitchSort" parent="@android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:colorAccent">@color/primary</item>
+    </style>
+</resources>

@@ -78,4 +78,18 @@ class SettingsNormalizerTest {
         assertEquals(3, SettingsNormalizer.normalizeBoardSize(0))
         assertEquals(3, SettingsNormalizer.normalizeBoardSize(null))
     }
+
+    @Test
+    fun `gueltige Darstellungsmodi bleiben erhalten`() {
+        assertEquals(0, SettingsNormalizer.normalizeThemeMode(SettingsNormalizer.THEME_SYSTEM))
+        assertEquals(1, SettingsNormalizer.normalizeThemeMode(SettingsNormalizer.THEME_LIGHT))
+        assertEquals(2, SettingsNormalizer.normalizeThemeMode(SettingsNormalizer.THEME_DARK))
+    }
+
+    @Test
+    fun `ungueltige Darstellungsmodi fallen auf System zurueck`() {
+        assertEquals(0, SettingsNormalizer.normalizeThemeMode(-1))
+        assertEquals(0, SettingsNormalizer.normalizeThemeMode(3))
+        assertEquals(0, SettingsNormalizer.normalizeThemeMode(null))
+    }
 }

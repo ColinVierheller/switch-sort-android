@@ -16,6 +16,10 @@
     <string name="options_board_3">3 × 3</string>
     <string name="options_board_4">4 × 4</string>
     <string name="options_board_5">5 × 5</string>
+    <string name="options_theme_label">Darstellung</string>
+    <string name="options_theme_system">System</string>
+    <string name="options_theme_light">Hell</string>
+    <string name="options_theme_dark">Dunkel</string>
     <string name="options_error_name_too_long">Name darf höchstens 24 Zeichen haben.</string>
     <string name="options_saved">Einstellungen gespeichert</string>
     <string name="options_save">Speichern</string>
@@ -29,9 +33,12 @@
 
     <!-- Spiel -->
     <string name="game_target">Suche die Zahl: %1$d</string>
-    <string name="game_score">Treffer: %1$d</string>
-    <string name="game_misses">Fehlversuche: %1$d/%2$d</string>
-    <string name="game_time">Verstrichene Zeit: %1$s</string>
+    <string name="game_score">%1$d</string>
+    <string name="game_misses">%1$d/%2$d</string>
+    <string name="game_time">%1$s</string>
+    <string name="game_stat_label_score">TREFFER</string>
+    <string name="game_stat_label_misses">FEHLER</string>
+    <string name="game_stat_label_time">ZEIT</string>
     <string name="game_finished">SPIELENDE – %1$d Treffer in %2$s</string>
     <string name="game_restart">Nochmal spielen</string>
     <string name="game_to_menu">Zurück zum Menü</string>

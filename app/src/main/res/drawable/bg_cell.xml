@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Zahlenzelle des Spielfelds: Ecken 12dp, im Pressed-Zustand leicht
+     dunkler über die eigene Farbe cellBackgroundPressed. -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/cellBackgroundPressed" />
+            <corners android:radius="12dp" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/cellBackground" />
+            <corners android:radius="12dp" />
+        </shape>
+    </item>
+</selector>

@@ -1,6 +1,8 @@
 package de.dhbw.switchsort
 
 import android.app.Activity
+import android.content.Context
+import android.content.res.Configuration
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -73,9 +75,35 @@ class MainActivity : Activity() {
     // Options-Views
     private lateinit var editPlayerName: EditText
     private lateinit var radioBoardSize: RadioGroup
+    private lateinit var radioTheme: RadioGroup
     private lateinit var textOptionsError: TextView
 
+    /** Modus beim Öffnen der Optionen; Speichern -> recreate() nur bei Änderung. */
+    private var themeModeAtOpen = SettingsNormalizer.DEFAULT_THEME_MODE
+
     private lateinit var textScores: TextView
+
+    /**
+     * Manueller Hell/Dunkel-Modus ohne AppCompat: bei Hell/Dunkel wird der
+     * Basis-Kontext mit überschriebener uiMode-Konfiguration gewrappt, sodass
+     * die Ressourcen aus values-night auflösen. Bei System bleibt der
+     * Basis-Kontext unverändert (der System-Nachtmodus greift selbst).
+     */
+    override fun attachBaseContext(newBase: Context) {
+        when (AppSettingsRepository(newBase).loadThemeMode()) {
+            SettingsNormalizer.THEME_LIGHT ->
+                super.attachBaseContext(wrapWithNightMode(newBase, Configuration.UI_MODE_NIGHT_NO))
+            SettingsNormalizer.THEME_DARK ->
+                super.attachBaseContext(wrapWithNightMode(newBase, Configuration.UI_MODE_NIGHT_YES))
+            else -> super.attachBaseContext(newBase)
+        }
+    }
+
+    private fun wrapWithNightMode(base: Context, nightMode: Int): Context {
+        val config = Configuration(base.resources.configuration)
+        config.uiMode = (config.uiMode and Configuration.UI_MODE_NIGHT_MASK.inv()) or nightMode
+        return base.createConfigurationContext(config)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -113,6 +141,7 @@ class MainActivity : Activity() {
 
         editPlayerName = findViewById(R.id.edit_player_name)
         radioBoardSize = findViewById(R.id.radio_board_size)
+        radioTheme = findViewById(R.id.radio_theme)
         textOptionsError = findViewById(R.id.text_options_error)
 
         textScores = findViewById(R.id.text_scores)
@@ -186,6 +215,12 @@ class MainActivity : Activity() {
             5 -> radioBoardSize.check(R.id.radio_board_5)
             else -> radioBoardSize.check(R.id.radio_board_3)
         }
+        themeModeAtOpen = settings.loadThemeMode()
+        when (themeModeAtOpen) {
+            SettingsNormalizer.THEME_LIGHT -> radioTheme.check(R.id.radio_theme_light)
+            SettingsNormalizer.THEME_DARK -> radioTheme.check(R.id.radio_theme_dark)
+            else -> radioTheme.check(R.id.radio_theme_system)
+        }
         showPanel(Panel.OPTIONS)
     }
 
@@ -202,8 +237,20 @@ class MainActivity : Activity() {
             else -> 3
         }
         settings.saveBoardSize(size)
+        val themeMode = when (radioTheme.checkedRadioButtonId) {
+            R.id.radio_theme_light -> SettingsNormalizer.THEME_LIGHT
+            R.id.radio_theme_dark -> SettingsNormalizer.THEME_DARK
+            else -> SettingsNormalizer.THEME_SYSTEM
+        }
+        settings.saveThemeMode(themeMode)
         Toast.makeText(this, R.string.options_saved, Toast.LENGTH_SHORT).show()
-        showPanel(Panel.MENU)
+        if (themeMode != themeModeAtOpen) {
+            // Nachtmodus-Override greift in attachBaseContext: nur dort wird
+            // ein geänderter Modus aktiv, daher Neuaufbau der Activity.
+            recreate()
+        } else {
+            showPanel(Panel.MENU)
+        }
     }
 
     // ------------------------------------------------------------------
@@ -293,6 +340,9 @@ class MainActivity : Activity() {
             val button = Button(this).apply {
                 text = value.toString()
                 textSize = 18f
+                setTextColor(getColor(R.color.textPrimary))
+                setBackgroundResource(R.drawable.bg_cell)
+                minHeight = (56 * resources.displayMetrics.density).toInt()
                 isEnabled = roundActive
                 setOnClickListener { onCellTap(value) }
             }
@@ -300,7 +350,7 @@ class MainActivity : Activity() {
                 width = 0
                 height = GridLayout.LayoutParams.WRAP_CONTENT
                 columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
-                val margin = (2 * resources.displayMetrics.density).toInt()
+                val margin = (4 * resources.displayMetrics.density).toInt()
                 setMargins(margin, margin, margin, margin)
             }
             gridBoard.addView(button, params)

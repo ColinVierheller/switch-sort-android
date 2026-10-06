@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Launcher-Vordergrund: drei gestapelte abgerundete Quadrate in der
+     Pastell-Palette (accent / primary / cellBackground). Viewport 108x108
+     gemäß Adaptive-Icon-Regel, Motiv bleibt in der sicheren Mittelzone. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="@color/accent"
+        android:pathData="M 53,32 L 67,32 Q 74,32 74,39 L 74,53 Q 74,60 67,60 L 53,60 Q 46,60 46,53 L 46,39 Q 46,32 53,32 Z" />
+    <path
+        android:fillColor="@color/primary"
+        android:pathData="M 47,40 L 61,40 Q 68,40 68,47 L 68,61 Q 68,68 61,68 L 47,68 Q 40,68 40,61 L 40,47 Q 40,40 47,40 Z" />
+    <path
+        android:fillColor="@color/cellBackground"
+        android:strokeColor="@color/boardStroke"
+        android:strokeWidth="1.5"
+        android:pathData="M 41,48 L 55,48 Q 62,48 62,55 L 62,69 Q 62,76 55,76 L 41,76 Q 34,76 34,69 L 34,55 Q 34,48 41,48 Z" />
+</vector>

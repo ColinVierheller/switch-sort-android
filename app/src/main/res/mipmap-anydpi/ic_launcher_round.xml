@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Runder Fallback für API 23-25: ovale Grundfläche + Vordergrund. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="@color/background" />
+        </shape>
+    </item>
+    <item
+        android:width="64dp"
+        android:height="64dp"
+        android:drawable="@drawable/ic_launcher_fg"
+        android:gravity="center" />
+</layer-list>
