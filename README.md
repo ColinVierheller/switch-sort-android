@@ -63,6 +63,16 @@ avdmanager create avd -n switchsort -k "system-images;android-35;google_apis;x86
 emulator -avd switchsort
 ```
 
+## In Android Studio starten (Ablauf)
+
+*Hinweis: benötigt Android Studio Quail/2025.1+ (AGP 9.3.1). Das SDK unter `C:\Users\<user>\Android\Sdk` wird über `local.properties` gefunden.*
+
+1. **Öffnen:** File → Open → Projektordner wählen. Gradle-Sync läuft automatisch (beim ersten Mal lädt der Wrapper gradle-9.7.0 herunter).
+2. **Emulator haben:** Device Manager (rechte Seitenleiste) → + → Create Virtual Device → Pixel-Gerät wählen → System Image **API 35** herunterladen → Finish. *(Einmalig nötig.)*
+3. **Starten:** Oben in der Run-Leiste Emulator/Gerät + `app` auswählen → **Play-Button ▶**. Fertig – App baut sich und startet selbst.
+
+Ab dann bei jedem Mal nur noch: **Android Studio aufmachen → ▶ drücken.** Ein Re-Sync ist nur nötig, wenn sich Gradle-Dateien ändern; der Emulator muss nicht vorher gestartet sein.
+
 ## Tests und Qualität
 
 ```bash
