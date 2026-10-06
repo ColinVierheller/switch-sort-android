@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Eine Activity, vier Panels. Sichtbarkeit wird in MainActivity gesteuert.
+     Klassische Android Views, keine Abhängigkeiten außer der Plattform. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- ============ Panel: Hauptmenü ============ -->
+    <LinearLayout
+        android:id="@+id/panel_menu"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:id="@+id/menu_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:text="@string/menu_title"
+            android:textSize="28sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btn_start"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/menu_start" />
+
+        <Button
+            android:id="@+id/btn_scores"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/menu_scores" />
+
+        <Button
+            android:id="@+id/btn_options"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/menu_options" />
+
+        <Button
+            android:id="@+id/btn_exit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/menu_exit" />
+    </LinearLayout>
+
+    <!-- ============ Panel: Optionen ============ -->
+    <ScrollView
+        android:id="@+id/panel_options"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:text="@string/options_title"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/options_player_name" />
+
+            <EditText
+                android:id="@+id/edit_player_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autofillHints="username"
+                android:hint="@string/options_player_name"
+                android:importantForAccessibility="yes"
+                android:inputType="textPersonName"
+                android:singleLine="true" />
+
+            <TextView
+                android:id="@+id/text_options_error"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#B00020"
+                android:visibility="gone" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/options_board_size_label" />
+
+            <RadioGroup
+                android:id="@+id/radio_board_size"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <RadioButton
+                    android:id="@+id/radio_board_3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/options_board_3" />
+
+                <RadioButton
+                    android:id="@+id/radio_board_4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/options_board_4" />
+
+                <RadioButton
+                    android:id="@+id/radio_board_5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/options_board_5" />
+            </RadioGroup>
+
+            <Button
+                android:id="@+id/btn_options_save"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/options_save" />
+
+            <Button
+                android:id="@+id/btn_options_back"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/options_back" />
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- ============ Panel: Highscore ============ -->
+    <LinearLayout
+        android:id="@+id/panel_scores"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="@string/scores_title"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/text_scores"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp" />
+        </ScrollView>
+
+        <Button
+            android:id="@+id/btn_scores_back"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/scores_back" />
+    </LinearLayout>
+
+    <!-- ============ Panel: Spiel ============ -->
+    <ScrollView
+        android:id="@+id/panel_game"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/text_target"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/text_score"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:id="@+id/text_misses"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="end" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/text_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp" />
+
+            <TextView
+                android:id="@+id/text_finished"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                android:textColor="#B00020"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <GridLayout
+                android:id="@+id/grid_board"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp" />
+
+            <Button
+                android:id="@+id/btn_restart"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/game_restart"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/btn_game_back"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/game_to_menu" />
+        </LinearLayout>
+    </ScrollView>
+</FrameLayout>

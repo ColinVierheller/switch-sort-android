@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SwitchSort</string>
+
+    <!-- Hauptmenü -->
+    <string name="menu_title">SwitchSort</string>
+    <string name="menu_start">Spiel starten</string>
+    <string name="menu_scores">Highscore</string>
+    <string name="menu_options">Optionen</string>
+    <string name="menu_exit">Beenden</string>
+
+    <!-- Optionen -->
+    <string name="options_title">Optionen</string>
+    <string name="options_player_name">Spielername</string>
+    <string name="options_board_size_label">Feldgröße</string>
+    <string name="options_board_3">3 × 3</string>
+    <string name="options_board_4">4 × 4</string>
+    <string name="options_board_5">5 × 5</string>
+    <string name="options_error_name_too_long">Name darf höchstens 24 Zeichen haben.</string>
+    <string name="options_saved">Einstellungen gespeichert</string>
+    <string name="options_save">Speichern</string>
+    <string name="options_back">Zurück</string>
+
+    <!-- Highscore -->
+    <string name="scores_title">Highscore</string>
+    <string name="scores_empty">Noch keine Ergebnisse.</string>
+    <string name="scores_entry">%1$d. %2$s · %3$d×%3$d · %4$d Treffer · %5$s</string>
+    <string name="scores_back">Zurück</string>
+
+    <!-- Spiel -->
+    <string name="game_target">Suche die Zahl: %1$d</string>
+    <string name="game_score">Treffer: %1$d</string>
+    <string name="game_misses">Fehlversuche: %1$d/%2$d</string>
+    <string name="game_time">Verstrichene Zeit: %1$s</string>
+    <string name="game_finished">SPIELENDE – %1$d Treffer in %2$s</string>
+    <string name="game_restart">Nochmal spielen</string>
+    <string name="game_to_menu">Zurück zum Menü</string>
+</resources>
